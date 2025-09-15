@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Logout</title>
+<script type="text/javascript">
+    function logout() {
+        //debugger;
+        var hosting = baseDomainString();
+        var queryStr = unescape(window.location.href);
+        var res = queryStr.split("RD=");
+        var redirect = res[1];
+        if (typeof (redirect) == "undefined" || redirect == "") { redirect = "https://www.gettips.com/mobile/index.html"; }
+        redirect = "https://www.gettips.com/elo.html?RD=" + redirect
+        var hosting = baseDomainString();
+        DeleteCookie("ID", "/", hosting);
+        DeleteCookie("Sess", "/", hosting);
+        document.cookie = "ID=;expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=.certegrity.com; path=/;";
+        document.cookie = "Sess=;expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=.certegrity.com; path=/;";
+        if (redirect) { window.location.href = redirect; }
+    }
+    function baseDomainString() {
+        e = document.domain.split(/\./);
+        if (e.length > 1) {
+            return (e[e.length - 2] + "." + e[e.length - 1]);
+        } else {
+            return ("");
+        }
+    }
+    function DeleteCookie(name, path, domain) {
+        document.cookie = name + "=" + ((path) ? ";path=" + path : "") + ((domain) ? ";domain=" + domain : "") + ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+    }
+    function getUrlParameter(sParam) {
+        var queryStr = unescape(window.location.href) + '&';
+        var regex = new RegExp('.*?[&\\?]' + sParam + '=(.*?)&.*');
+        val = queryStr.replace(regex, "$1");
+        if (val == queryStr) { val = ""; }
+        if (val.indexOf("#") > 0) {
+            var res = val.split("#");
+            val = res[0];
+        }
+        return val;
+    }
+</script>
+</head>
+<body onload="logout();">
+</body>
+</html>

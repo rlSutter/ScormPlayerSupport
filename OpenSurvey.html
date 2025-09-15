@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Open Survey</title>
+<script type="text/javascript" src="//www.gettips.com/mobile/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+$(document).bind("mobileinit", function() {
+    $.ajaxSetup( { "async":false, "cache":false, "crossDomain":true } );
+    $.mobile.allowCrossDomainPages = true;
+    $.mobile.loadingMessage = false;
+    if (navigator.userAgent.toLowerCase().indexOf("msie") != -1) {
+    	$.mobile.allowCrossDomainPages = true;
+    	$.support.cors = true;
+    }
+});
+</script>
+<link rel="stylesheet" href="//www.gettips.com/mobile/jquery.mobile-1.3.2.css">
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/customizations.css">
+<script src="//www.gettips.com/mobile/js/jquery.mobile-1.3.2.min.js"></script>
+<style type="text/css">
+#cert .c-interior {
+	padding: 0px;
+	margin: 0px;
+	background-color: #f9f9f9;
+	margin: 0px;
+    color: #000000;
+}
+#info1   {
+    color: #000000;
+    }
+#cert .ui-header{
+	background-image: none;
+	padding-top: 20px;
+	text-align: center;
+	height: 40px;
+	color: #b6bdca;
+	font-size: .9em;
+}
+a#navbutton1 a#navbutton2 {
+	border: 0px;
+	background-image: none;
+	background-color: #5EA5E1;
+	width: 55%;
+	color: #fff;
+	padding: 16px 19px;
+	text-transform: uppercase;
+	margin: 0px auto;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	opacity: 1;
+	text-indent: 0px;
+}
+body {
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-size: 17pt;
+	background-color: #3e4553;
+	background-image: none;
+}
+</style>
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/isellsafe.css" />
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/pbsa.css" />
+<script type="text/javascript">
+var loggedIn = false;
+var hosting = baseDomainString();
+var myprotocol = document.location.protocol;
+var pathArray = window.location.pathname.split( '?' );
+var mylocation = window.location.protocol + "//" + window.location.host + pathArray[0];
+var urlBase = location.href.substring(0, location.href.lastIndexOf("/")+1);
+var LangCd = 'ENU';
+var saveRedirect = document.location.hash;
+
+// Parameters
+var SurveyId = getUrlParameter('ID');
+if (SurveyId == undefined) { SurveyId = ''; }
+var ContactId = getUrlParameter('CON');
+if (ContactId == undefined) { ContactId = ''; }
+var uid = getUrlParameter('UID');
+if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+var sessid = getUrlParameter('SES');
+if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+var domain = getUrlParameter('PP');
+if (domain == undefined) { domain = 'TIPS'; }
+var LangCd = getUrlParameter('LANG');
+if (LangCd == undefined || LangCd == '') { LangCd = 'ENU'; }
+var savesource = getUrlParameter('CUR');
+if (savesource==undefined || savesource=="") {
+	savesource = document.referrer;
+	if (savesource==undefined) { savesource=""; }
+	}
+if (savesource=="") { savesource = "https://www.gettips.com/mobile/index.html#cert"; }
+
+// Declarations
+var relogin = false;
+var EXAM_NAME = "";
+var NextLink = "";
+var Refresh = 0;
+var TYPE_CD = "";
+var MSG1 = "";
+var DOMAIN = "";
+var ErrMsg = "";
+
+function breakout_of_frame() {
+	if (top.location != location) { top.location.href = document.location.href ; }
+}
+function DeviceWidth() {
+    var deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+    // iOS returns available pixels, Android returns pixels / pixel ratio
+    // http://www.quirksmode.org/blog/archives/2012/07/more_about_devi.html
+    if (navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio) {
+        deviceWidth = deviceWidth / window.devicePixelRatio;
+    }
+    return deviceWidth;
+}
+// Get base domain
+function baseDomainString(){
+  	e = document.domain.split(/\./);
+  	if(e.length > 1) {
+    	return(e[e.length-2] + "." +  e[e.length-1]);
+  	} else {
+    	return("");
+  	}
+}
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+function updateTheme() {
+	newTheme = "b";
+	if (domain == "ISELLSAFE") { newTheme = "f"; }
+	if (domain == "PBSA") { newTheme = "g"; }
+	var rmbtnClasses = '';
+	var rmhfClasses = '';
+	var rmbdClassess = '';
+	var arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"  ];
+	$.each(arr,function(index, value){
+	    rmbtnClasses = rmbtnClasses + " ui-btn-up-"+value + " ui-btn-hover-"+value;
+	    rmhfClasses = rmhfClasses + " ui-bar-"+value;
+	    rmbdClassess = rmbdClassess + " ui-body-"+value;
+	});
+	$.mobile.activePage.find('.ui-btn').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	if (newTheme != "b") {
+		$.mobile.activePage.find('.ui-btn').removeClass(rmbtnClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+		}
+	$.mobile.activePage.find('.ui-bar').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-header, .ui-footer').removeClass(rmhfClasses).addClass('ui-bar-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-input-text').removeClass(rmhfClasses).addClass('ui-input-text-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.removeClass(rmbdClassess).addClass('ui-body-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-select').removeClass(rmhfClasses).addClass('ui-select-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn').removeClass(rmhfClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-hover').removeClass(rmhfClasses).addClass('ui-btn-hover-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-up').removeClass(rmhfClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+}
+function readCookie(name) {
+   var nameEQ = name + "=";
+   var ca = document.cookie.split(';');
+   for(var i=0;i < ca.length;i++){
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) { return c.substring(nameEQ.length,c.length); }
+   }
+   return '';
+}
+function getCookie(name) {
+	var test = readCookie(name);
+	if (test == null || typeof(test) == "undefined") { test = ""; }
+	return test;
+}
+function DeleteCookie(name, path, domain) {
+    document.cookie = name + "=" + ((path) ? ";path=" + path : "") + ((domain) ? ";domain=" + domain : "") + ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+}
+function SetCookie (name, value) {
+  var argv = SetCookie.arguments;
+  var argc = SetCookie.arguments.length;
+  var expires = (argc > 2) ? argv[2] : null;
+  var path = (argc > 3) ? argv[3] : null;
+  var domain = (argc > 4) ? argv[4] : null;
+  var secure = (argc > 5) ? argv[5] : false;
+  document.cookie = name + "=" + escape (value) +
+    ((path == null) ? "" : ("; path=" + path)) +
+    ((domain == null) ? "" : ("; domain=" + domain)) +
+    ((secure == true) ? "; secure" : "");
+}
+function loginuser() {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() +  86400000);
+    SetCookie("ID",uid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",sessid, null , "/" , ".certegrity.com");
+}
+function logoutuser(olduid, oldsessid) {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() -  86400000);
+    SetCookie("ID",olduid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",oldsessid, null , "/" , ".certegrity.com");
+}
+function getStatus() {
+	breakout_of_frame();
+	var relogin = '';
+	loggedIn = false;
+
+	// Check parameters
+	if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+	if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+
+  	// Check cookies
+	var uid2 = getCookie('ID');
+	var sessid2 = getCookie('Sess');
+	if (sessid2 == "" || uid2 == "") {
+		loginuser();
+		uid2 = getCookie('ID');
+		sessid2 = getCookie('Sess');
+		}
+	if ((sessid2 == "" || uid2 == "") && SurveyId == "") {
+	    Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:120px;"><tr><td valign="middle" height="33%" align="center"><h3 style="color:red; align:center;">You are not logged in, and so cannot take this course</h3>'
+		 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+	    $("#Msg1").html(Msg1);
+	    $("#ProceedBtn").button();
+	    updateTheme();
+	    return;
+    } else {
+	    if (sessid2 == "" && uid2 == "" && SurveyId != "") {
+	        getSurvey();
+	        return;
+	        }
+    	}
+
+ 	// Evaluate cookies
+	if (uid != '' && sessid!='') {
+		if (uid2 == uid && sessid2 == sessid) {
+			loggedIn = true;
+			getSurvey();
+			return;
+			}
+		else {
+			logoutuser(uid2, sessid2);
+			loginuser();
+			uid2 = getCookie('ID');
+			sessid2 = getCookie('Sess');
+			if (uid2 == uid && sessid2 == sessid) {
+				loggedIn = true;
+				getSurvey();
+				return; }
+			else {
+				Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">There is an issue with your credentials.'
+				 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+				$("#Msg1").html(Msg1);
+				$("#ProceedBtn").button();
+				updateTheme();
+				return;
+				}
+			}
+		}
+
+	var request = "/ls/WsCLogin.ashx?UID="
+			+ uid2 + "&SES=" + sessid2 + "&HP=" + hosting + "&RL=" + relogin + "&FM=M&callback=?";
+	$.getJSON(request, function (JSONData) {
+    	uid = JSONData.ResultSet.Id;
+		sessid = JSONData.ResultSet.SessId;
+		redirect = JSONData.ResultSet.Redirect;
+		errmsg = JSONData.ResultSet.ErrMsg;
+		logout = JSONData.ResultSet.LogOut;
+		username = JSONData.ResultSet.Username;
+		msgSendFrom = JSONData.ResultSet.EmailAddr;
+		domain = JSONData.ResultSet.Domain;
+
+		if (errmsg!='') {
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">'+errmsg+'.'
+			 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			updateTheme();
+			loggedIn = false;
+			DeleteCookie("ID","/",hosting);
+			DeleteCookie("Sess","/",hosting);
+			uid = '';
+			sessid='';
+			errmsg = '';
+			return false;
+		}
+		if (redirect!='') {
+			loggedIn = true;
+			var expdate = new Date();
+			expdate.setTime (expdate.getTime() +  86400000);
+		 	SetCookie("ID", uid, expdate, "/", "."+hosting);
+			SetCookie("Sess", sessid, expdate, "/", "."+hosting);
+			getSurvey();
+			return;
+		}
+	});
+}
+function getSurvey() {
+    if (SurveyId == "") {
+        Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">No survey was specified.'
+		 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="navbutton1" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+        $("#Msg1").html(Msg1);
+        $("#navbutton1").button();
+        updateTheme();
+        return;
+    }
+    var request = "https://w1.certegrity.com/ps0.nsf/WsGetSurvey?OpenAgent&ID=" + SurveyId + "&CON=" + ContactId
+		+ "&UID=" + uid + "&SES=" + sessid + "&PP=" + domain + "&HP=" + hosting
+		+ "&PROT=" + myprotocol + "&CUR=" + savesource + "&callback=?";
+    $.ajax({
+        url: request,
+        dataType: "jsonp",
+        jsonpCallback: "getSurveyCallback"
+    });
+}
+function getSurveyCallback(JSONData) {
+	ErrMsg = JSONData.ResultSet.ErrMsg;
+	Refresh = Number(JSONData.ResultSet.Refresh);
+	NextLink = JSONData.ResultSet.NextLink;
+	AnonFlg = (JSONData.ResultSet.AnonFlg === 'True');
+	if (NextLink=="") { NextLink = savesource; }
+	if (ErrMsg!="") {
+		document.title = "Error opening survey";
+		Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100" id="MsgTable"><tr><td valign="middle" height="33%" align="center" style="color: red;"><h3>' + ErrMsg + '</h3></td></tr>'
+		 + '<tr><td align="Center"><br><br><a href="' + NextLink + '" id="navbutton1" data-role="button" rel="external" data-theme="c">Click to Continue</a></td></tr></table>';
+		$("#Msg1").html(Msg1);
+		$("#navbutton1").button();
+		$.mobile.initializePage();
+		updateTheme();
+		var count = Refresh;
+		var countdown = setInterval(function(){
+		$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+		if (count == 0) {
+			clearInterval(countdown);
+			window.location = savesource;
+			}
+			count--;
+		}, 1000);
+		return;
+	}
+
+    // Get results
+	relogin = (JSONData.ResultSet.relogin === 'True');
+	if (AnonFlg) {
+	    uid = JSONData.ResultSet.UID;
+	    sessid = JSONData.ResultSet.SessID;
+	    if (uid != "" && sessid != "") { relogin = true; }
+   		}
+	EXAM_NAME = JSONData.ResultSet.EXAM_NAME;
+	if (EXAM_NAME) { document.title = EXAM_NAME; }
+	TYPE_CD = JSONData.ResultSet.TYPE_CD;
+	MSG1 = JSONData.ResultSet.MSG1;
+	DOMAIN = JSONData.ResultSet.DOMAIN;
+	if (relogin) { loginuser(); }
+
+	// Prepare output
+	$("#Msg1").html(MSG1);
+	$("#navbutton1").button();
+	$("#navbutton2").button();
+	$('.ui-page').trigger('create');
+	updateTheme();
+	if (Refresh>0 && NextLink!="") {
+		var count = Refresh;
+		var countdown = setInterval(function(){
+			$("#info1").html("<center><br /><br />(Continuing in " + count + " seconds)</center>");
+			if (count == 0) {
+				clearInterval(countdown);
+				window.location = NextLink;
+				}
+			count--;
+		}, 1000);
+		return;
+	}
+}
+</script>
+</head>
+<body>
+<div data-role="page" id="cert" data-theme="d" style="text-align: center; background-color: #f9f9f9;">
+<div class="c-interior" id="docinterior" style="text-align: center; background-color: #f9f9f9; height: 100%;">
+<div data-role="header" data-theme="b" data-position="fixed"><h1>Take a Survey</h1></div>
+<div data-role="content" style="text-align: center; background-color: #f9f9f9; height: 30em;">
+<div id="Msg1"><h3>One moment please...</h3></div>
+<div id="info1"></div>
+</div>
+</div></div>
+</body>
+<script type="text/javascript">
+// SCREEN ORIENTATION
+var lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+if (lockOrientation) {
+	try { lockOrientation("landscape-primary"); } catch (e) { }
+	try { lockOrientation("landscape"); } catch (e) { }
+	}
+
+// PAGE EVENTS
+$.mobile.resetActivePageHeight = (function (prevHandler) {
+	return function () {
+		var $window = $(window),
+			$page = $("." + $.mobile.activePageClass),
+			$content = $page.find(".ui-content"),
+			scrollTop;
+		scrollTop = $window.scrollTop();
+		$content.height(0);
+		prevHandler.apply(this, arguments);
+		$content.css({ height: "" });
+		$window.scrollTop(scrollTop);
+		$page.trigger("pageresize");
+	};
+})($.mobile.resetActivePageHeight);
+
+$(window.document).on("pageinit", function (event) {
+	var $page = $(event.target),
+	$header = $page.find(".ui-header"),
+	$content = $page.find(".ui-content"),
+	$fullHeight = $page.find(".ui-fullheight"),
+	extraPageHeight = function () {
+		return $page.outerHeight() -
+				$header.outerHeight() -
+				$content.outerHeight();
+		};
+	if (!$fullHeight.length) {
+		return;
+	}
+	$page.on("pageresize updatelayout", function () {
+		$fullHeight
+			.filter(":visible:first")
+			.each(function () {
+				var $element = $(this),
+					initHeight = $element.jqmData("init-height");
+				if (!initHeight) {
+					initHeight = $element.height();
+					$element.jqmData("init-height", initHeight);
+				}
+				if ($element.height() == initHeight && extraPageHeight() <= 0) {
+					return;
+				}
+				$element
+					.height(0)
+					.height(
+						Math.max(
+							initHeight,
+							extraPageHeight()
+						)
+					);
+			});
+	});
+});
+$(document).on('pageshow', '#cert', function(){
+	updateTheme();
+});
+$.mobile.initializePage();
+// Start
+$("#Msg1").show();
+updateTheme();
+getStatus();
+</script>
+</html>

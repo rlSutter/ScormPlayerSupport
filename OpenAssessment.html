@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Assessment</title>
+<script type="text/javascript" src="//www.gettips.com/mobile/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+$(document).bind("mobileinit", function() {
+    $.ajaxSetup( { "async":false, "cache":false, "crossDomain":true } );
+    $.mobile.allowCrossDomainPages = true;
+    $.mobile.loadingMessage = false;
+    if (navigator.userAgent.toLowerCase().indexOf("msie") != -1) {
+    	$.mobile.allowCrossDomainPages = true;
+    	$.support.cors = true;
+    }
+});
+</script>
+<link rel="stylesheet" href="//www.gettips.com/mobile/jquery.mobile-1.3.2.css">
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/customizations.css">
+<script src="//www.gettips.com/mobile/js/jquery.mobile-1.3.2.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.js" language="javascript"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.js" language="javascript"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-media.js" language="javascript"></script>
+<style type="text/css">
+#ExamLocation { height: 100%; }
+#reg .c-interior {
+	padding: 0px;
+	margin: 0px;
+}
+#reg .ui-header h1 {
+	font-size: 16px;
+	padding-bottom: 16px;
+	text-transform: uppercase;
+	color: #b6bdca;
+}
+div.ui-input-text input.ui-input-text {
+	border-radius: 3px;
+	background-color: #eee;
+	padding: 15px 30px;
+	width: 100%;
+	font-size: 12pt;
+	box-sizing: border-box;
+	margin-top: 10px;
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	text-shadow: none;
+	color: #666;
+}
+.BigHeader {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 20px;
+	color: #791D7E;
+	font-weight: bold;
+	color: gray;
+	text-align: center;
+	}
+</style>
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/isellsafe.css" />
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/pbsa.css" />
+<script language="javascript">
+var loggedIn = false;
+var hosting = baseDomainString();
+var myprotocol = document.location.protocol;
+var pathArray = window.location.pathname.split( '?' );
+var mylocation = window.location.protocol + "//" + window.location.host + pathArray[0];
+var urlBase = location.href.substring(0, location.href.lastIndexOf("/")+1);
+var LangCd = 'ENU';
+var saveRedirect = document.location.hash;
+var closeButn=false;
+var timedOut=false;
+var _isexit=0;
+
+// Parameters
+var RegId = getUrlParameter('RID');
+if (RegId == undefined) { RegId = ''; }
+var AssessId = getUrlParameter('EID');
+if (AssessId == undefined) { AssessId = ''; }
+var uid = getUrlParameter('UID');
+if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+var sessid = getUrlParameter('SES');
+if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+var HomePage = getUrlParameter('HP');
+if (HomePage == undefined) { HomePage = 'gettips.com'; }
+var domain = getUrlParameter('PP');
+if (domain == undefined) { domain = 'TIPS'; }
+var LangCd = getUrlParameter('LANG');
+if (LangCd == undefined || LangCd == '') { LangCd = 'ENU'; }
+var savesource = getUrlParameter('CUR');
+if (savesource==undefined || savesource=="") {
+	savesource = document.referrer;
+	if (savesource==undefined) { savesource=""; }
+	}
+if (savesource == "") { savesource = "https://www.gettips.com/mobile/index.html"; }
+var RefreshID = getUrlParameter('RFR');
+if (RefreshID == undefined) { RefreshID = ''; }
+
+// Declarations
+var NextLink = "";
+var RefreshLink = "";
+var UnLoadLink = "";
+var LAST_INST = "";
+var MSG1 = "";
+
+var TST_ID = "";
+var REG_ID = "";
+var UserKey = "";
+var EXAM = "";
+var TYPE_CD = "";
+var USER_NAME = "";
+var EMAIL_ADDR = "";
+var DOMAIN = "";
+var ENGINE = "";
+var CONTINUABLE_FLG = "Y";
+var AutoStart = false;
+var HCIPlayer = false;
+var X_FORMAT = "";
+var RESOLUTION = "";
+var RES_X = "";
+var RES_Y = "";
+var KBA_QUES_NUM = 0;
+var delay = 0;
+var CALL_SCREEN = "";
+var CALL_ID = "";
+
+function breakout_of_frame()
+{
+	if (CONTINUABLE_FLG!="N") {
+		if (top.location != location) {
+			newlocation = document.location.href;
+			top.location.href = newlocation;
+		}
+	}
+}
+function pausecomp(millis){
+	var date = new Date();
+	var curDate = null;
+ 	do { curDate = new Date(); }
+ 	while(curDate-date < millis);
+}
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'), sParameterName, i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+function baseDomainString(){
+  	e = document.domain.split(/\./);
+  	if(e.length > 1) {
+    	return(e[e.length-2] + "." +  e[e.length-1]);
+  	} else {
+    	return("");
+  	}
+}
+function openNewWindow(fileName,theWidth,theHeight) {
+	window.open(fileName,"Message","toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width="+theWidth+",height="+theHeight)
+}
+function readCookie(name) {
+   var nameEQ = name + "=";
+   var ca = document.cookie.split(';');
+   for(var i=0;i < ca.length;i++){
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) { return c.substring(nameEQ.length,c.length); }
+   }
+   return '';
+}
+function SetCookie (name, value) {
+	var argv = SetCookie.arguments;
+	var argc = SetCookie.arguments.length;
+	var expires = (argc > 2) ? argv[2] : null;
+	var path = (argc > 3) ? argv[3] : null;
+	var domain = (argc > 4) ? argv[4] : null;
+	var secure = (argc > 5) ? argv[5] : false;
+	document.cookie = name + "=" + escape (value) +
+		((path == null) ? "" : ("; path=" + path)) +
+		((domain == null) ? "" : ("; domain=" + domain)) +
+		((secure == true) ? "; secure" : "");
+}
+function loginuser() {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() +  86400000);
+    SetCookie("ID",uid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",sessid, null , "/" , ".certegrity.com");
+}
+function logoutuser(olduid, oldsessid) {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() -  86400000);
+    SetCookie("ID",olduid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",oldsessid, null , "/" , ".certegrity.com");
+}
+function getCookie(name) {
+	var test = readCookie(name);
+	if (test == null || typeof(test) == "undefined") { test = ""; }
+	return test;
+}
+function getStatus() {
+	breakout_of_frame();
+	if (top.location != location) { return; }
+	var relogin = '';
+	loggedIn = false;
+
+	// Check parameters
+	if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+	if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+
+  	// Check cookies
+	var uid2 = getCookie('ID');
+	var sessid2 = getCookie('Sess');
+	if (sessid2 == "" || uid2 == "") {
+		loginuser();
+		uid2 = getCookie('ID');
+		sessid2 = getCookie('Sess');
+		}
+	if (sessid2 == "" || uid2 == "") {
+		Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:120px;"><tr><td valign="middle" height="33%" align="center"><h3 style="color:red; align:center;">You are not logged in, and so cannot access this assessment</h3>'
+		 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+		$("#Msg1").html(Msg1);
+		$("#ProceedBtn").button();
+		updateTheme();
+		return;
+		}
+
+ 	// Evaluate cookies
+	if (uid != '' && sessid!='') {
+		if (uid2 == uid && sessid2 == sessid) {
+			loggedIn = true;
+			CreateExam();
+			return;
+			}
+		else {
+			logoutuser(uid2, sessid2);
+			loginuser();
+			uid2 = getCookie('ID');
+			sessid2 = getCookie('Sess');
+			if (uid2 == uid && sessid2 == sessid) {
+				loggedIn = true;
+				CreateExam();
+				return; }
+			else {
+				Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">There is an issue with your credentials.'
+				 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+				$("#Msg1").html(Msg1);
+				$("#ProceedBtn").button();
+				updateTheme();
+				return;
+				}
+			}
+		}
+
+	var request = "/ls/WsCLogin.ashx?UID="
+			+ uid2 + "&SES=" + sessid2 + "&HP=" + hosting + "&RL=" + relogin + "&FM=M&callback=?";
+	$.getJSON(request, function (JSONData) {
+    	uid = JSONData.ResultSet.Id;
+		sessid = JSONData.ResultSet.SessId;
+		redirect = JSONData.ResultSet.Redirect;
+		errmsg = JSONData.ResultSet.ErrMsg;
+		logout = JSONData.ResultSet.LogOut;
+		username = JSONData.ResultSet.Username;
+		msgSendFrom = JSONData.ResultSet.EmailAddr;
+		domain = JSONData.ResultSet.Domain;
+
+		if (errmsg!='') {
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">'+errmsg+'.'
+			 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			updateTheme();
+			loggedIn = false;
+			DeleteCookie("ID","/",hosting);
+			DeleteCookie("Sess","/",hosting);
+			uid = '';
+			sessid='';
+			errmsg = '';
+			return false;
+		}
+		if (redirect!='') {
+			loggedIn = true;
+			var expdate = new Date();
+			expdate.setTime (expdate.getTime() +  86400000);
+		 	SetCookie("ID", uid, expdate, "/", "."+hosting);
+			SetCookie("Sess", sessid, expdate, "/", "."+hosting);
+			CreateExam();
+			return;
+		}
+	});
+}
+function DoCommand(szCommand) {
+	if (szCommand == 'closewindow'){
+		closeButn = true;
+		window.close();
+		parent.window.close();
+	}
+}
+function SetExam() {
+	loginuser();
+	var expdate = new Date();
+	expdate.setTime (expdate.getTime() + 86400000);
+	SetCookie("CrseId", TST_ID, expdate, "/", ".certegrity.com");
+	SetCookie("RegId", REG_ID, expdate, "/", ".certegrity.com");
+	SetCookie("UserKey", UserKey, expdate, "/", ".certegrity.com");
+}
+function UnsetExam() {
+	var expdate = new Date();
+	expdate.setTime (expdate.getTime() - 86400000);
+	SetCookie("CrseId", TST_ID, expdate, "/", ".certegrity.com");
+	SetCookie("RegId", REG_ID, expdate, "/", ".certegrity.com");
+}
+function FinishExam(){
+	pausecomp(100);
+	window.opener.document.location = LAST_INST;
+}
+function SetMsg() {
+	if (HCIPlayer) {
+		window.location = ExamLink;
+	} else {
+		$("#Msg1").html('<center><iframe id="exam" name="exam" style="background-color:#808080" height="' + RES_Y + '" width="' + RES_X + '" marginwidth="0" marginheight="0" frameBorder="0" scrolling="no" src="' + ExamLink + '"></iframe></center>');
+		}
+}
+function ReturnSource() {
+	window.location = savesource;
+}
+function CreateExam() {
+    if (AssessId == "" && RegId == "") { return; }
+    var request = "/ls/WsGetAssessment.ashx?EID=" + AssessId + "&RID=" + RegId + "&UID=" + uid + "&SES=" + sessid
+		+ "&HP=" + HomePage + "&PP=" + domain + "&PROT=" + myprotocol + "&CUR=" + savesource + "&RFR=" + RefreshID + "&callback=?";
+	$.getJSON(request, function (JSONData) {
+		var errmsg = JSONData.ResultSet.ErrMsg;
+		ExamLink = JSONData.ResultSet.ExamLink;
+		MSG1 = JSONData.ResultSet.MSG1;
+		if (errmsg != "" || ExamLink == undefined || ExamLink == "") {
+		    if (errmsg == "" && MSG1 != "") { errmsg = MSG1; }
+			document.title = "Error starting assessment";
+			Msg1 = '<h3>' + errmsg + '</h3><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			$("#Msg1").show();
+			updateTheme();
+			$.mobile.initializePage();
+
+			var count = 30;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					window.location = savesource + '#reg';
+					}
+				count--;
+			}, 1000);
+			return;
+		}
+
+		// Get results
+		NextLink = JSONData.ResultSet.NextLink;
+		RefreshLink = JSONData.ResultSet.RefreshLink;
+		UnLoadLink = JSONData.ResultSet.UnLoadLink;
+		LAST_INST = JSONData.ResultSet.LAST_INST;
+		UserKey = JSONData.ResultSet.UserKey;
+		ALT_ASSESS = JSONData.ResultSet.ALT_ASSESS;
+		EXAM_STATUS_CD = JSONData.ResultSet.EXAM_STATUS_CD;
+		TST_ID = JSONData.ResultSet.TST_ID;
+		REG_ID = JSONData.ResultSet.REG_ID;
+		EXAM = JSONData.ResultSet.EXAM;
+		if (EXAM) { document.title = EXAM; }
+		TYPE_CD = JSONData.ResultSet.TYPE_CD;
+		USER_NAME = JSONData.ResultSet.USER_NAME;
+		EMAIL_ADDR = JSONData.ResultSet.EMAIL_ADDR;
+		DOMAIN = JSONData.ResultSet.DOMAIN;
+		ENGINE = JSONData.ResultSet.ENGINE;
+		CONTINUABLE_FLG = JSONData.ResultSet.CONTINUABLE_FLG;
+		AutoStart = (JSONData.ResultSet.AutoStart === 'True');
+		HCIPlayer = (JSONData.ResultSet.HCIPlayer === 'True');
+		X_FORMAT = JSONData.ResultSet.X_FORMAT;
+		RESOLUTION = JSONData.ResultSet.RESOLUTION;
+		RES_X = JSONData.ResultSet.RES_X;
+		RES_Y = JSONData.ResultSet.RES_Y;
+		KBA_QUES_NUM = Number(JSONData.ResultSet.KBA_QUES_NUM);
+		delay = Number(JSONData.ResultSet.delay);
+		CALL_SCREEN = JSONData.ResultSet.CALL_SCREEN;
+		CALL_ID = JSONData.ResultSet.CALL_ID;
+		if (KBA_QUES_NUM > 0) {
+		    var expdate = new Date();
+		    expdate.setTime(expdate.getTime() + 86400000);
+		    SetCookie("CrseId", TST_ID, expdate, "/", ".certegrity.com");
+		    SetCookie("RegId", REG_ID, expdate, "/", ".certegrity.com");
+		    SetCookie("UserKey", UserKey, expdate, "/", ".certegrity.com");
+		    }
+
+		if (X_FORMAT=="HTML5") {
+			window.onunload=beforeUnload();
+			if (MSG1!="") { $("#Msg1").html(MSG1); }
+			if (HCIPlayer) {
+				if (ALT_ASSESS=="N" || EXAM_STATUS_CD!="Pending") {
+					window.location = ExamLink;
+					}
+				if (ALT_ASSESS=="Y" && EXAM_STATUS_CD=="Pending") {
+					$("#ProceedBtn").button();
+					$("#AssessmentBtn").button();
+					}
+			} else {
+				$("#instructions").html('<span class="BigHeader">If you need to leave this assessment before you finish it, be sure to click the Logout button.<br>If you leave any other way you may lose the answers you have selected.<br><br>Technical Support is available from 9 a.m. to 1 a.m. EST,  Monday through Friday and 10 a.m. to 6 p.m. EST, Saturday and Sunday at <u>techsupport@gettips.com</u>, 800-GET-TIPS, ext. 600 or by clicking <i>Have a question?</i> in the upper left corner to initiate a chat session.</span>');
+				$(".fancybox").fancybox();
+				$(".fancybox").eq(0).trigger('click');
+				setTimeout(function(){ $.fancybox.close(); }, 10000)
+				if (RES_X != "" && RES_Y != "") {
+				    $("#ExamLocation").html('<iframe id="Exam" name="Class" style="background-color:#FFFFFF" height="' + RES_Y + '" width="' + RES_X + '" marginwidth="0" marginheight="0" frameBorder="0" space="0" vspace="0" scrolling="no" src="' + ExamLink + '"></iframe>')
+				} else {
+				    $("#ExamLocation").html('<iframe id="Exam" name="Class" style="background-color:#FFFFFF" height="95%" width="95%" marginwidth="0" marginheight="0" frameBorder="0" space="0" vspace="0" scrolling="no" src="' + ExamLink + '"></iframe>')
+				}
+			}
+		} else {			
+			window.onunload=handleExit();
+			if (ExamLink!="") {
+				if (!AutoStart) { $("#Msg1").html(MSG1); }
+			} else {
+				if (MSG1!="") {
+					MSG1 = '<TABLE BORDER=0><TR HEIGHT="100%"><TD WIDTH="100%">' + MSG1 +
+						'</TD></TR><TR VALIGN="TOP"><TD ALIGN="CENTER">' +
+						'<br><a href=' + NextLink + ' id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click here to take the exam later</a><br>'
+					$("#Msg1").html(MSG1);
+					$("#ProceedBtn").button();
+				}
+			}
+			$("#ExamLocation").html('<iframe id="Exam" name="Class" style="background-color:#FFFFFF" height="' + RES_Y + '" width="' + RES_X + '" marginwidth="0" marginheight="0" frameBorder="0" space="0" vspace="0" scrolling="no" src="' + ExamLink + '"></iframe>')
+
+		}
+		if (ALT_ASSESS=="N" || EXAM_STATUS_CD!="Pending") {
+			$('.ui-page').trigger('create');
+			$("[data-position='fixed']").fixedtoolbar('hide');
+			$("#examheader").remove();
+			$(".c-interior").css("padding", "");
+			$(".c-interior").css("margin", "");
+			$("#Msg1").remove();
+			}
+		updateTheme();
+	});
+}
+function GetUpdate(REG_ID, EXAM_ID, SESS_PART_ID, ALT_TEST_ID) {
+	if (EXAM_ID=="") {
+		document.title = "Error updating record";
+		Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100" id="MsgTable" style="padding-top:80px;"><tr><td align="middle" height="33%" align="center" style="color: red;"><h3>There was an error updating your records.</h3></td></tr>'
+		 + '<tr><td align="Center"><br><br><a href="' + savesource + '" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></td></tr></table>';
+		$("#Msg1").html(Msg1);
+		$("#ProceedBtn").button();
+		$("#Msg1").show();
+		$.mobile.initializePage();
+		var count = 30000;
+		var countdown = setInterval(function(){
+			$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+			if (count == 0) {
+				clearInterval(countdown);
+				window.location = savesource;
+				}
+			count--;
+		}, 1000);
+		return;
+		}
+	var request = "https://www.gettips.com/pservice/WsUpdateRecords/?RID=" + REG_ID + "&ACP=" + EXAM_ID + "&AC2=" + SESS_PART_ID + "&AC3=" + ALT_TEST_ID
+		+ "&PP=" + domain + "&TYP=ASM&ACT=REQ&UID=" + uid + "&HP=" + hosting + "&SES=" + sessid
+		+ "&PROT=" + myprotocol + "&CUR=" + savesource + "&callback=?";
+	$.getJSON(request, function (JSONData) {
+		var errmsg = JSONData.ResultSet.ErrMsg;
+		DOMAIN = JSONData.ResultSet.DOMAIN;
+		ExamLink = JSONData.ResultSet.ExamLink;
+		HCIPlayer = (JSONData.ResultSet.HCIPlayer === 'True');
+		if (DOMAIN!="") { domain = DOMAIN; }
+
+		if (errmsg != "" || ExamLink == "") {
+			Msg1 = JSONData.ResultSet.MSG1;
+			document.title = "Error updating exam";
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" align="center" style="color: red;"><h3>' + Msg1 + '</h3></td></tr>'
+			 + '<tr><td align="Center"><br><br><a href="' + savesource + '" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			$('.ui-page').trigger('create');
+			updateTheme();
+
+			var count = 30;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					window.location = savesource;
+					}
+				count--;
+			}, 1000);
+			return;
+		}
+
+		// Get results
+		CTitle = JSONData.ResultSet.CTitle;
+		if (CTitle) { document.title = CTitle; }
+		relogin = (JSONData.ResultSet.relogin === 'True');
+
+		if (relogin) {
+			var uid2 = getCookie('ID');
+			var sessid2 = getCookie('Sess');
+			if (sessid2 == "" || uid2 == "") {
+				loginuser();
+				uid2 = getCookie('ID');
+				sessid2 = getCookie('Sess');
+				}
+			logoutuser(uid2, sessid2);
+			loginuser();
+			}
+
+		DMSG2 = JSONData.ResultSet.DMSG2;
+		Refresh = Number(JSONData.ResultSet.Refresh);
+		NextLink = JSONData.ResultSet.NextLink;
+		if (DMSG2 != "") { $("#Msg1").html("<h3 style='margin-top:100px;'>" + DMSG2 + "</h3>");}
+		$("#AssessmentBtn").button();
+		$("#ProceedBtn").button();
+		$('.ui-page').trigger('create');
+		updateTheme();
+
+		if (Refresh!=0 && NextLink!="") {
+			var count = Refresh;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					SetMsg();
+					}
+				count--;
+			}, 1000);
+			return;
+		}
+	});
+}
+function handleExit() {
+	if (KBA_QUES_NUM>0) { UnsetExam(); }
+	if (_isexit == 1) {
+		var iframeE = document.getElementById('exam');
+		if (iframeE) {
+			var win = iframeE.contentWindow;
+			if (win) {
+				win.defaultView.AssessmentEngine_finished();
+				win.defaultView.SCORMDriver.ConcedeControl();
+			}
+		}
+	}
+	pausecomp(500);
+}
+function beforeUnload() {
+	if (CALL_ID!="" && CALL_SCREEN!="") {
+		window.opener.document.location=NextLink;
+	} else {
+		if (CALL_SCREEN=="AssessmentThanks") {
+			window.opener.document.location = "https://w1.certegrity.com/ps0.nsf/AssessmentThanks?OpenForm&PP="+DOMAIN;
+		}
+	}
+}
+function updateTheme() {
+	newTheme = "b";
+	if (domain == "ISELLSAFE") { newTheme = "f"; }
+	if (domain == "PBSA") { newTheme = "g"; }
+	var rmbtnClasses = '';
+	var rmhfClasses = '';
+	var rmbdClassess = '';
+	var arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"  ];
+	$.each(arr,function(index, value){
+	    rmbtnClasses = rmbtnClasses + " ui-btn-up-"+value + " ui-btn-hover-"+value;
+	    rmhfClasses = rmhfClasses + " ui-bar-"+value;
+	    rmbdClassess = rmbdClassess + " ui-body-"+value;
+	});
+	$.mobile.activePage.find('.ui-btn').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	if (newTheme != "b") {
+		$.mobile.activePage.find('.ui-btn').removeClass(rmbtnClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+		}
+	$.mobile.activePage.find('.ui-bar').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-header, .ui-footer').removeClass(rmhfClasses).addClass('ui-bar-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-input-text').removeClass(rmhfClasses).addClass('ui-input-text-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.removeClass(rmbdClassess).addClass('ui-body-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-select').removeClass(rmhfClasses).addClass('ui-select-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn').removeClass(rmhfClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-hover').removeClass(rmhfClasses).addClass('ui-btn-hover-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-up').removeClass(rmhfClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+}
+</script>
+</head>
+<body class="ui-mobile-viewport ui-overlay-c">
+<div data-role="page" id="reg" data-theme="b" style="align: center; background-color: #ffffff; height: 100%;">
+<div class="c-interior" id="courseinterior" style="align: center; background-color: #ffffff;">
+<div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" id="examheader"><h1>Start the Assessment</h1></div>
+<div data-role="content">
+<a class="fancybox" href="#instructions" title="Instructions"></a>
+<div id="instructions" style="width:700px;display: none;"></div>
+<div id="Msg1" style="text-align: center;margin-top: 100px;"><h3 style="margin-top:50px;">One moment please...</h3></div>
+<div id="info1"></div><div id="ExamLocation" style="text-align: center;"></div>
+</div></div></div>
+</body>
+<script type="text/javascript">
+var lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+if (lockOrientation) {
+	try { lockOrientation("landscape-primary"); } catch (e) { }
+	try { lockOrientation("landscape"); } catch (e) { }
+	}
+
+$.mobile.resetActivePageHeight = (function (prevHandler) {
+	return function () {
+		var $window = $(window),
+			$page = $("." + $.mobile.activePageClass),
+			$content = $page.find(".ui-content"),
+			scrollTop;
+		scrollTop = $window.scrollTop();
+		$content.height(0);
+		prevHandler.apply(this, arguments);
+		$content.css({ height: "" });
+		$window.scrollTop(scrollTop);
+		$page.trigger("pageresize");
+	};
+})($.mobile.resetActivePageHeight);
+
+$("Exam").load( function () {
+ 	var c = (this.contentWindow || this.contentDocument);
+ 	if (c.document) d = c.document;
+ 	$(this).css({
+     	height: $(d).outerHeight(),
+     	width: $(d).outerWidth()
+ 	});
+ });
+
+$(window.document).on("pageinit", function (event) {
+	var $page = $(event.target),
+	$header = $page.find(".ui-header"),
+	$content = $page.find(".ui-content"),
+	$fullHeight = $page.find(".ui-fullheight"),
+	extraPageHeight = function () {
+		return $page.outerHeight() -
+				$header.outerHeight() -
+				$content.outerHeight();
+		};
+	if (!$fullHeight.length) {
+		return;
+	}
+	$page.on("pageresize updatelayout", function () {
+		$fullHeight
+			.filter(":visible:first")
+			.each(function () {
+				var $element = $(this),
+					initHeight = $element.jqmData("init-height");
+				if (!initHeight) {
+					initHeight = $element.height();
+					$element.jqmData("init-height", initHeight);
+				}
+				if ($element.height() == initHeight && extraPageHeight() <= 0) {
+					return;
+				}
+				$element
+					.height(0)
+					.height(
+						Math.max(
+							initHeight,
+							extraPageHeight()
+						)
+					);
+			});
+	});
+});
+$(document).on('pageshow', '#reg', function(){
+	updateTheme();
+	var screen = $.mobile.getScreenHeight();
+	var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight()  - 1 : $(".ui-header").outerHeight();
+	var footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight();
+	var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
+	var content = screen - header - footer - contentCurrent;
+	$(".ui-content").height(content);
+});
+$.mobile.initializePage();
+$("#Msg1").show();
+updateTheme();
+getStatus();
+</script>
+</html>

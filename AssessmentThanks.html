@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Thank You</title>
+    <script type="text/javascript" src="//www.gettips.com/mobile/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+        $(document).bind("mobileinit", function () {
+            $.ajaxSetup({ "async": false, "cache": false, "crossDomain": true });
+            $.mobile.allowCrossDomainPages = true;
+            $.mobile.loadingMessage = false;
+            if (navigator.userAgent.toLowerCase().indexOf("msie") != -1) {
+                $.mobile.allowCrossDomainPages = true;
+                $.support.cors = true;
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="//www.gettips.com/mobile/jquery.mobile-1.3.2.css">
+    <link rel="stylesheet" href="//www.gettips.com/mobile/css/customizations.css">
+    <script src="//www.gettips.com/mobile/js/jquery.mobile-1.3.2.min.js"></script>
+    <style type="text/css">
+        #Msg1 {
+            color: #000000;
+        }
+        #info1   {
+            color: #000000;
+        }
+        a#navbutton1 a#navbutton2 {
+            border: 0px;
+            background-image: none;
+            background-color: #5EA5E1;
+            width: 55%;
+            color: #fff;
+            padding: 16px 19px;
+            text-transform: uppercase;
+            margin: 0px auto;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            font-family: 'Source Sans Pro', Helvetica, sans-serif;
+            opacity: 1;
+            text-indent: 0px;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', Helvetica, sans-serif;
+            font-size: 17pt;
+            background-color: #3e4553;
+            background-image: none;
+        }
+    </style>
+    <link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/isellsafe.css" />
+    <link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/pbsa.css" />
+    <script type="text/javascript" >
+        var loggedIn = false;
+        var hosting = baseDomainString();
+        var myprotocol = document.location.protocol;
+        var pathArray = window.location.pathname.split('?');
+        var mylocation = window.location.protocol + "//" + window.location.host + pathArray[0];
+        var urlBase = location.href.substring(0, location.href.lastIndexOf("/") + 1);
+        var LangCd = 'ENU';
+
+        // Parameters
+        var AssessId = getUrlParameter('ID');
+        if (AssessId == undefined) { AssessId = ''; }
+        var domain = getUrlParameter('PP');
+        if (domain == undefined) { domain = 'TIPS'; }
+        var LangCd = getUrlParameter('LANG');
+        if (LangCd == undefined || LangCd == '') { LangCd = 'ENU'; }
+        var savesource = getUrlParameter('CUR');
+        if (LangCd == "ENU") {
+            savesource = "https://www.gettips.com/mobile/index.html";
+        } else {
+            savesource = "https://www.gettips.com/mobile/" + LangCd + "/index.html";
+        }
+
+        // Declarations
+        var NextLink = savesource;
+        var PAUSE = 60;
+
+        function logout() {
+            //debugger;
+            var hosting = baseDomainString();
+            var queryStr = unescape(window.location.href);
+            var res = queryStr.split("RD=");
+            var redirect = res[1];
+            if (typeof (redirect) == "undefined" || redirect == "") { redirect = "https://www.gettips.com/mobile/index.html"; }
+            redirect = "https://www.gettips.com/elo.html?RD=" + redirect
+            var hosting = baseDomainString();
+            DeleteCookie("ID", "/", hosting);
+            DeleteCookie("Sess", "/", hosting);
+            document.cookie = "ID=;expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=.certegrity.com; path=/;";
+            document.cookie = "Sess=;expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=.certegrity.com; path=/;";
+            Msg1 = '<h3>Thank you for answering our survey questions.</h3><br><br><a href="' + savesource + '" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to login to our Portal</a>';
+            $("#Msg1").html(Msg1);
+            $("#ProceedBtn").button();
+            $('.ui-page').trigger('create');
+            updateTheme();
+            var count = 30;
+            var countdown = setInterval(function () {
+                $("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+                if (count == 0) {
+                    clearInterval(countdown);
+                    window.location = savesource;
+                }
+                count--;
+            }, 1000);
+        }
+        function baseDomainString() {
+            e = document.domain.split(/\./);
+            if (e.length > 1) {
+                return (e[e.length - 2] + "." + e[e.length - 1]);
+            } else {
+                return ("");
+            }
+        }
+        function DeleteCookie(name, path, domain) {
+            document.cookie = name + "=" + ((path) ? ";path=" + path : "") + ((domain) ? ";domain=" + domain : "") + ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+        }
+        function getUrlParameter(sParam) {
+            var queryStr = unescape(window.location.href) + '&';
+            var regex = new RegExp('.*?[&\\?]' + sParam + '=(.*?)&.*');
+            val = queryStr.replace(regex, "$1");
+            if (val == queryStr) { val = ""; }
+            if (val.indexOf("#") > 0) {
+                var res = val.split("#");
+                val = res[0];
+            }
+            return val;
+        }
+        function updateTheme() {
+            newTheme = "b";
+            if (domain == "ISELLSAFE") { newTheme = "f"; }
+            if (domain == "PBSA") { newTheme = "g"; }
+            var rmbtnClasses = '';
+            var rmhfClasses = '';
+            var rmbdClassess = '';
+            var arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+            $.each(arr, function (index, value) {
+                rmbtnClasses = rmbtnClasses + " ui-btn-up-" + value + " ui-btn-hover-" + value;
+                rmhfClasses = rmhfClasses + " ui-bar-" + value;
+                rmbdClassess = rmbdClassess + " ui-body-" + value;
+            });
+            $.mobile.activePage.find('.ui-btn').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+            if (newTheme != "b") {
+                $.mobile.activePage.find('.ui-btn').removeClass(rmbtnClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+            }
+            $.mobile.activePage.find('.ui-bar').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-header, .ui-footer').removeClass(rmhfClasses).addClass('ui-bar-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-input-text').removeClass(rmhfClasses).addClass('ui-input-text-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.removeClass(rmbdClassess).addClass('ui-body-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-select').removeClass(rmhfClasses).addClass('ui-select-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-btn').removeClass(rmhfClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-btn-hover').removeClass(rmhfClasses).addClass('ui-btn-hover-' + newTheme).attr('data-theme', newTheme);
+            $.mobile.activePage.find('.ui-btn-up').removeClass(rmhfClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+        }
+    </script>
+</head>
+<body class="ui-mobile-viewport ui-overlay-c">
+    <div data-role="page" id="reg" data-theme="b" style="text-align: center; background-color: #f9f9f9; height: 100%;">
+        <div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" id="examheader"><h1>Your Survey was Received</h1></div>
+        <div data-role="content" style="text-align: center; background-color: #f9f9f9;">
+            <div id="Msg1" style="text-align: center; margin-top:100px;"><h3>One moment please...</h3></div>
+            <div id="info1"></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    var lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+    if (lockOrientation) {
+        try { lockOrientation("landscape-primary"); } catch (e) { }
+        try { lockOrientation("landscape"); } catch (e) { }
+    }
+
+    $.mobile.resetActivePageHeight = (function (prevHandler) {
+        return function () {
+            var $window = $(window),
+                $page = $("." + $.mobile.activePageClass),
+                $content = $page.find(".ui-content"),
+                scrollTop;
+            scrollTop = $window.scrollTop();
+            $content.height(0);
+            prevHandler.apply(this, arguments);
+            $content.css({ height: "" });
+            $window.scrollTop(scrollTop);
+            $page.trigger("pageresize");
+        };
+    })($.mobile.resetActivePageHeight);
+
+    $("Exam").load(function () {
+        var c = (this.contentWindow || this.contentDocument);
+        if (c.document) d = c.document;
+        $(this).css({
+            height: $(d).outerHeight(),
+            width: $(d).outerWidth()
+        });
+    });
+
+    $(window.document).on("pageinit", function (event) {
+        var $page = $(event.target),
+        $header = $page.find(".ui-header"),
+        $content = $page.find(".ui-content"),
+        $fullHeight = $page.find(".ui-fullheight"),
+        extraPageHeight = function () {
+            return $page.outerHeight() -
+                    $header.outerHeight() -
+                    $content.outerHeight();
+        };
+        if (!$fullHeight.length) {
+            return;
+        }
+        $page.on("pageresize updatelayout", function () {
+            $fullHeight
+                .filter(":visible:first")
+                .each(function () {
+                    var $element = $(this),
+                        initHeight = $element.jqmData("init-height");
+                    if (!initHeight) {
+                        initHeight = $element.height();
+                        $element.jqmData("init-height", initHeight);
+                    }
+                    if ($element.height() == initHeight && extraPageHeight() <= 0) {
+                        return;
+                    }
+                    $element
+                        .height(0)
+                        .height(
+                            Math.max(
+                                initHeight,
+                                extraPageHeight()
+                            )
+                        );
+                });
+        });
+    });
+    $(document).on('pageshow', '#reg', function () {
+        updateTheme();
+    });
+    $.mobile.initializePage();
+    $("#Msg1").show();
+    updateTheme();
+    logout();
+</script>
+</html>

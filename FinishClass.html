@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exit from the Course</title>
+<script type="text/javascript" src="//www.gettips.com/mobile/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+$(document).bind("mobileinit", function() {
+    $.ajaxSetup( { "async":false, "cache":false, "crossDomain":true } );
+    $.mobile.allowCrossDomainPages = true;
+    $.mobile.loadingMessage = false;
+    if (navigator.userAgent.toLowerCase().indexOf("msie") != -1) {
+    	$.mobile.allowCrossDomainPages = true;
+    	$.support.cors = true;
+    }
+});
+</script>
+<link rel="stylesheet" href="//www.gettips.com/mobile/jquery.mobile-1.3.2.css">
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/customizations.css">
+<script src="//www.gettips.com/mobile/js/jquery.mobile-1.3.2.min.js"></script>
+<script src="//www.gettips.com/js/wtooltip.js" type="text/javascript"></script>
+<style type="text/css">"
+.ui-overlay-d {
+	background: #f9f9f9;
+	}
+a#navbutton1 a#navbutton2 {
+	border: 0px;
+	background-image: none;
+	background-color: #5EA5E1;
+	width: 55%;
+	color: #fff;
+	padding: 16px 19px;
+	text-transform: uppercase;
+	margin: 0px auto;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	opacity: 1;
+	text-indent: 0px;
+}
+</style>
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/isellsafe.css" />
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/pbsa.css" />
+<script type="text/javascript">
+// Environment
+var loggedIn = false;
+var hosting = baseDomainString();
+var myprotocol = document.location.protocol;
+var pathArray = window.location.pathname.split( '?' );
+var mylocation = window.location.protocol + "//" + window.location.host + pathArray[0];
+var urlBase = location.href.substring(0, location.href.lastIndexOf("/")+1);
+var LangCd = 'ENU';
+var saveRedirect = document.location.hash;
+
+// Declarations
+var REG_STATUS_CD = "";
+var MSG1 = "";
+var Refresh = 0;
+var CRSE_NAME = ""
+var redirect = "";
+var NextLink = "";
+var ExamLink = "";
+var ClassLink = "";
+
+// Parameters
+var RegId = getUrlParameter('RID');
+if (RegId == undefined) { RegId = ''; }
+var domain = getUrlParameter('PP');
+if (domain == undefined) { domain = 'TIPS'; }
+var uid = getUrlParameter('UID');
+if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+var sessid = getUrlParameter('SES');
+if (sessid == null || typeof (sessid) == "undefined") { sessid = ""; }
+var HomePage = getUrlParameter('HP');
+if (HomePage == undefined) { HomePage = 'gettips.com'; }
+var LangCd = getUrlParameter('LANG');
+if (LangCd == undefined || LangCd == '') { LangCd = 'ENU'; }
+var savesource = getUrlParameter('CUR');
+if (savesource==undefined || savesource=="") {
+	savesource = document.referrer;
+	if (savesource==undefined) { savesource=""; }
+	}
+if (savesource=="") { savesource = "https://www.gettips.com/mobile/index.html"; }
+savesource = savesource.replace("/ValFinishSClass?OpenAgent","");
+
+// Document init
+$(document).ready(function(){
+	$("a").wTooltip({
+		style: {
+			fontFamily: "Arial, Helvetica, sans-serif",
+			fontSize: "11"
+    	}
+    });
+});
+$("Class").load( function () {
+	var c = (this.contentWindow || this.contentDocument);
+	if (c.document) d = c.document;
+	$(this).css({
+  	 	height: $(d).outerHeight(),
+  	 	width: $(d).outerWidth()
+	});
+});
+function breakout_of_frame()
+{
+	if (top.location != location) {
+		newlocation = document.location.href;
+		newlocation = newlocation.replace("/ValFinishSClass?OpenAgent","");
+		top.location.href = newlocation;
+	}
+}
+function DeviceWidth() {
+    var deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+    // iOS returns available pixels, Android returns pixels / pixel ratio
+    // http://www.quirksmode.org/blog/archives/2012/07/more_about_devi.html
+    if (navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio) {
+        deviceWidth = deviceWidth / window.devicePixelRatio;
+    }
+    return deviceWidth;
+}
+// Get base domain
+function baseDomainString(){
+  	e = document.domain.split(/\./);
+  	if(e.length > 1) {
+    	return(e[e.length-2] + "." +  e[e.length-1]);
+  	} else {
+    	return("");
+  	}
+}
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+function DoCommand(szCommand) {
+ if (szCommand == "closewindow"){
+	window.close();
+	parent.window.close();
+    }
+ if (szCommand == "close"){
+	window.close();
+	parent.window.close();
+    }
+}
+function openNewWin2(fileName,theWidth,theHeight) {
+	DocWindow = window.open(fileName,"Option","toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width="+theWidth+",height="+theHeight)
+}
+function pausecomp(millis){
+	var date = new Date();
+	var curDate = null;
+ 	do { curDate = new Date(); }
+ 	while(curDate-date < millis);
+}
+function readCookie(name) {
+   var nameEQ = name + "=";
+   var ca = document.cookie.split(';');
+   for(var i=0;i < ca.length;i++)
+   {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) {
+			return c.substring(nameEQ.length,c.length);
+			}
+   }
+   return '';
+}
+function SetCookie (name, value) {
+  var argv = SetCookie.arguments;
+  var argc = SetCookie.arguments.length;
+  var expires = (argc > 2) ? argv[2] : null;
+  var path = (argc > 3) ? argv[3] : null;
+  var domain = (argc > 4) ? argv[4] : null;
+  var secure = (argc > 5) ? argv[5] : false;
+  document.cookie = name + "=" + escape (value) +
+    ((path == null) ? "" : ("; path=" + path)) +
+    ((domain == null) ? "" : ("; domain=" + domain)) +
+    ((secure == true) ? "; secure" : "");
+}
+function getCookie(name) {
+	var test = readCookie(name);
+	if (test == null || typeof(test) == "undefined") { test = ""; }
+	return test;
+}
+function loginuser() {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() +  86400000);
+    SetCookie("ID",uid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",sessid, null , "/" , ".certegrity.com");
+}
+function logoutuser(olduid, oldsessid) {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() -  86400000);
+    SetCookie("ID",olduid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",oldsessid, null , "/" , ".certegrity.com");
+}
+function updateTheme() {
+	newTheme = "b";
+	if (domain == "ISELLSAFE") { newTheme = "f"; }
+	if (domain == "PBSA") { newTheme = "g"; }
+	var rmbtnClasses = '';
+	var rmhfClasses = '';
+	var rmbdClassess = '';
+	var arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"  ];
+	$.each(arr,function(index, value){
+	    rmbtnClasses = rmbtnClasses + " ui-btn-up-"+value + " ui-btn-hover-"+value;
+	    rmhfClasses = rmhfClasses + " ui-bar-"+value;
+	    rmbdClassess = rmbdClassess + " ui-body-"+value;
+	});
+	$.mobile.activePage.find('.ui-btn').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	if (newTheme != "b") {
+		$.mobile.activePage.find('.ui-btn').removeClass(rmbtnClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+		}
+	$.mobile.activePage.find('.ui-bar').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-header, .ui-footer').removeClass(rmhfClasses).addClass('ui-bar-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-input-text').removeClass(rmhfClasses).addClass('ui-input-text-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.removeClass(rmbdClassess).addClass('ui-body-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-select').removeClass(rmhfClasses).addClass('ui-select-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn').removeClass(rmhfClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-hover').removeClass(rmhfClasses).addClass('ui-btn-hover-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-up').removeClass(rmhfClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+}
+// Checks to see if we are already logged in
+function getStatus() {
+	breakout_of_frame();
+	if (top.location != location) { return; }
+	var relogin = '';
+	loggedIn = false;
+
+	// Check parameters
+	if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+	if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+
+  	// Check cookies
+	var uid2 = getCookie('ID');
+	var sessid2 = getCookie('Sess');
+	if (sessid2 == "" || uid2 == "") {
+		loginuser();
+		uid2 = getCookie('ID');
+		sessid2 = getCookie('Sess');
+		}
+	if (sessid2 == "" || uid2 == "") {
+		Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:120px;"><tr><td valign="middle" height="33%" align="center"><h3 style="color:red; align:center;">You are not logged in</h3>'
+		 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+		$("#Msg1").html(Msg1);
+		$("#ProceedBtn").button();
+		updateTheme();
+		return;
+		}
+
+ 	// Evaluate cookies
+	if (uid != '' && sessid!='') {
+		if (uid2 == uid && sessid2 == sessid) {
+			loggedIn = true;
+			leaveClass();
+			return;
+			}
+		else {
+			logoutuser(uid2, sessid2);
+			loginuser();
+			uid2 = getCookie('ID');
+			sessid2 = getCookie('Sess');
+			if (uid2 == uid && sessid2 == sessid) {
+				loggedIn = true;
+				leaveClass();
+				return; }
+			else {
+				Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">There is an issue with your credentials.'
+				 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+				$("#Msg1").html(Msg1);
+				$("#ProceedBtn").button();
+				updateTheme();
+				return;
+				}
+			}
+		}
+
+	var request = "/ls/WsCLogin.ashx?UID="
+			+ uid2 + "&SES=" + sessid2 + "&HP=" + HomePage + "&RL=" + relogin + "&FM=M&callback=?";
+	$.getJSON(request, function (JSONData) {
+    	uid = JSONData.ResultSet.Id;
+		sessid = JSONData.ResultSet.SessId;
+		redirect = JSONData.ResultSet.Redirect;
+		errmsg = JSONData.ResultSet.ErrMsg;
+		logout = JSONData.ResultSet.LogOut;
+		username = JSONData.ResultSet.Username;
+		msgSendFrom = JSONData.ResultSet.EmailAddr;
+		domain = JSONData.ResultSet.Domain;
+
+		if (errmsg!='') {
+			DisplayError("There was an error",errmsg, "#loginp");
+			loggedIn = false;
+			DeleteCookie("ID","/",hosting);
+			DeleteCookie("Sess","/",hosting);
+			uid = '';
+			sessid='';
+			errmsg = '';
+			return false;
+		}
+		if (redirect!='') {
+			loggedIn = true;
+			var expdate = new Date();
+			expdate.setTime (expdate.getTime() +  86400000);
+		 	SetCookie("ID", uid, expdate, "/", "."+hosting);
+			SetCookie("Sess", sessid, expdate, "/", "."+hosting);
+			getClass();
+			return;
+		}
+	});
+}
+function leaveClass() {
+    updateTheme();
+    var request = "/ls/WsLeaveClass.ashx?RID=" + RegId + "&UID=" + uid + "&SES=" + sessid
+		+ "&HP=" + HomePage + "&PP=" + domain + "&PROT=" + myprotocol + "&CUR=" + savesource + "&callback=?";
+	$.getJSON(request, function (JSONData) {
+		var errmsg = JSONData.ResultSet.ErrMsg;
+		if (errmsg!="") {
+			//
+			document.title = "Error starting class";
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center" style="color: red;"><b>' + errmsg + '</b></td></tr>'
+			 + '<tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			$("#Msg1").show();
+			$.mobile.initializePage();
+
+			var count = 30;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					window.location = savesource + '#reg';
+					}
+				count--;
+			}, 1000);
+			return;
+		}
+
+		// Get results
+		REG_STATUS_CD = JSONData.ResultSet.REG_STATUS_CD;
+		MSG1 = JSONData.ResultSet.MSG1;
+		Refresh = Number(JSONData.ResultSet.Refresh);
+		CRSE_NAME = JSONData.ResultSet.CRSE_NAME;
+		if (CRSE_NAME) { document.title = CRSE_NAME; }
+		redirect = JSONData.ResultSet.redirect;
+		NextLink = JSONData.ResultSet.NextLink;
+		ExamLink = JSONData.ResultSet.ExamLink;
+		ClassLink = JSONData.ResultSet.ClassLink;
+
+		$("#Msg1").html("<center><h3>"+MSG1+"</h3></center>");
+		$('.ui-page').trigger('create');
+		updateTheme();
+
+		if (REG_STATUS_CD=="Exam Reqd") {
+			//$(window).on('beforeunload', function(){ window.opener.document.location = NextLink; });
+		}
+		if (Refresh>0 && NextLink!="") {
+			var count = Refresh;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					window.location = NextLink;
+					}
+				count--;
+			}, 1000);
+		} else {
+			if (NextLink!="") { window.location = NextLink; }
+		}
+	});
+}
+</script>
+</head>
+<body onload="javascript:breakout_of_frame();" style="background-color: #f9f9f9;">
+<div data-role="page" id="reg" data-theme="d" style="align: center; background-color: #f9f9f9; height: 100%;">
+	<div class="c-interior" style="align: center; background-color: #f9f9f9;">
+		<div data-role="header" data-theme="b" data-position="fixed"><h1>Exit from the Course</h1></div>
+		<div data-role="content">
+			<div id="Msg1" style="align:center;"><center><br /><br /><br /><br /><br /><h3>One moment please...</h3></center></div>
+			<div id="info1"></div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+// SCREEN ORIENTATION
+var lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+if (lockOrientation) {
+	try { lockOrientation("landscape-primary"); } catch (e) { }
+	try { lockOrientation("landscape"); } catch (e) { }
+	}
+
+// PAGE EVENTS
+$.mobile.resetActivePageHeight = (function (prevHandler) {
+	return function () {
+		var $window = $(window),
+			$page = $("." + $.mobile.activePageClass),
+			$content = $page.find(".ui-content"),
+			scrollTop;
+		scrollTop = $window.scrollTop();
+		$content.height(0);
+		prevHandler.apply(this, arguments);
+		$content.css({ height: "" });
+		$window.scrollTop(scrollTop);
+		$page.trigger("pageresize");
+	};
+})($.mobile.resetActivePageHeight);
+
+$(window.document).on("pageinit", function (event) {
+	var $page = $(event.target),
+	$header = $page.find(".ui-header"),
+	$content = $page.find(".ui-content"),
+	$fullHeight = $page.find(".ui-fullheight"),
+	extraPageHeight = function () {
+		return $page.outerHeight() -
+				$header.outerHeight() -
+				$content.outerHeight();
+		};
+	if (!$fullHeight.length) {
+		return;
+	}
+	$page.on("pageresize updatelayout", function () {
+		$fullHeight
+			.filter(":visible:first")
+			.each(function () {
+				var $element = $(this),
+					initHeight = $element.jqmData("init-height");
+				if (!initHeight) {
+					initHeight = $element.height();
+					$element.jqmData("init-height", initHeight);
+				}
+				if ($element.height() == initHeight && extraPageHeight() <= 0) {
+					return;
+				}
+				$element
+					.height(0)
+					.height(
+						Math.max(
+							initHeight,
+							extraPageHeight()
+						)
+					);
+			});
+	});
+});
+$(document).on('pageshow', '#reg', function(){
+	updateTheme();
+});
+$.mobile.initializePage();
+$("#Msg1").show();
+getStatus();
+</script>
+</html>

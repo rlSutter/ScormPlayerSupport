@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Start Class</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="//www.gettips.com/mobile/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+$(document).bind("mobileinit", function() {
+    $.ajaxSetup( { "async":false, "cache":false, "crossDomain":true } );
+    $.mobile.allowCrossDomainPages = true;
+    $.mobile.loadingMessage = false;
+    if (navigator.userAgent.toLowerCase().indexOf("msie") != -1) {
+    	$.mobile.allowCrossDomainPages = true;
+    	$.support.cors = true;
+    }
+});
+</script>
+<link rel="stylesheet" href="//www.gettips.com/mobile/jquery.mobile-1.3.2.css">
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/customizations.css">
+<script src="//www.gettips.com/mobile/js/jquery.mobile-1.3.2.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-buttons.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/helpers/jquery.fancybox-media.js"></script>
+<script type="text/javascript" src="//www.gettips.com/js/swfobject.js"></script>
+<script type="text/javascript" src="//www.gettips.com/js/facebox.js"></script>
+<script src="//www.gettips.com/js/sessvars_sso.js" type="text/javascript"></script>
+<script src="//www.gettips.com/js/wtooltip.js" type="text/javascript"></script>
+<link href="//www.gettips.com/css/facebox.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+#CourseLocation { height: 100%; }
+#reg .c-interior {
+	padding: 0px;
+	margin: 0px;
+}
+#reg .ui-header h1 {
+	font-size: 16px;
+	padding-bottom: 16px;
+	text-transform: uppercase;
+	color: #b6bdca;
+}
+div.ui-input-text input.ui-input-text {
+	border-radius: 3px;
+	background-color: #eee;
+	padding: 15px 30px;
+	width: 100%;
+	font-size: 12pt;
+	box-sizing: border-box;
+	margin-top: 10px;
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	text-shadow: none;
+	color: #666;
+}
+</style>
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/isellsafe.css" />
+<link rel="stylesheet" href="//www.gettips.com/mobile/css/themes/pbsa.css" />
+<script language="javascript">
+var loggedIn = false;
+var hosting = baseDomainString();
+var myprotocol = document.location.protocol;
+var pathArray = window.location.pathname.split( '?' );
+var mylocation = window.location.protocol + "//" + window.location.host + pathArray[0];
+var urlBase = location.href.substring(0, location.href.lastIndexOf("/")+1);
+var LangCd = 'ENU';
+var saveRedirect = document.location.hash;
+
+// Parameters
+var RegId = getUrlParameter('RID');
+if (RegId == undefined) { RegId = ''; }
+var domain = getUrlParameter('PP');
+if (domain == undefined) { domain = 'TIPS'; }
+var uid = getUrlParameter('UID');
+if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+var sessid = getUrlParameter('SES');
+if (sessid == null || typeof (sessid) == "undefined") { sessid = ""; }
+var HomePage = getUrlParameter('HP');
+if (HomePage == undefined) { HomePage = 'gettips.com'; }
+var LangCd = getUrlParameter('LANG');
+if (LangCd == undefined || LangCd == '') { LangCd = 'ENU'; }
+var savesource = getUrlParameter('CUR');
+if (savesource==undefined || savesource=="") {
+	savesource = document.referrer;
+	if (savesource==undefined) { savesource=""; }
+	}
+if (savesource=="") { savesource = "//www.gettips.com/mobile/index.html"; }
+
+// Set if the user redirects from this page to a course player
+var lRedirect = '';
+
+// Event setups
+var eAcceptClass = '';
+var eCreateClass = '';
+var LAST_INST = '';
+var hciplayer = '';
+var ClassLink = '';
+
+// Computed messages
+var DOCLIST = '';
+var MSG1 = '';
+var MSG2 = '';
+
+// Set for KBA
+var a_id = new Array(100);
+var a_text = new Array(100);
+var KBA_FLAG = false;
+var KBA_REQD = "N";
+var KBA_COUNT = 0;
+var KBA_QUESTIONS = 0;
+var TO_ASK = 0;
+var NUM_ANSRD = 0;
+var KBA_NOTICE = "N";
+
+// Flags
+var OldScorm = false;
+var AutoStart = false;
+var Olark = false;
+var HCIPlayer = false;
+var AnotherWindow = false;
+
+// Class Information
+var JURIS_ID = "";
+var X_FORMAT = "";
+var CRSE_ID = "";
+var RESOLUTION = "";
+var RES_X = "";
+var RES_Y = "";
+var JURIS = ""
+var JURIS_LVL = ""
+var COURSE = ""
+
+// User Information
+var FST_NAME = "";
+var LAST_NAME = "";
+var EMAIL_ADDR = "";
+var REG_STATUS_CD = "";
+var USER_NAME = "";
+var LANG_CD = "";
+var rId = "";
+var rSessId = "";
+
+// Setup for Flash
+var requiredMajorVersion = 10;
+var requiredMinorVersion = 0;
+var requiredRevision = 0;
+var hasRequestedVersion = swfobject.hasFlashPlayerVersion('10.0.0');
+
+// Document init
+$(document).ready(function(){
+	$("a").wTooltip({
+		style: {
+			fontFamily: "Arial, Helvetica, sans-serif",
+			fontSize: "11"
+    	}
+    });
+});
+$("Class").load( function () {
+	var c = (this.contentWindow || this.contentDocument);
+	if (c.document) d = c.document;
+	$(this).css({
+  	 	height: $(d).outerHeight(),
+  	 	width: $(d).outerWidth()
+	});
+});
+function breakout_of_frame()
+{
+	if (top.location != location) {
+		top.location.href = document.location.href;
+	}
+}
+function DeviceWidth() {
+    var deviceWidth = window.orientation == 0 ? window.screen.width : window.screen.height;
+    if (navigator.userAgent.indexOf('Android') >= 0 && window.devicePixelRatio) {
+        deviceWidth = deviceWidth / window.devicePixelRatio;
+    }
+    return deviceWidth;
+}
+// Get base domain
+function baseDomainString(){
+  	e = document.domain.split(/\./);
+  	if(e.length > 1) {
+    	return(e[e.length-2] + "." +  e[e.length-1]);
+  	} else {
+    	return("");
+  	}
+}
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+function DoCommand(szCommand) {
+ if (szCommand == "closewindow"){
+	window.close();
+	parent.window.close();
+    }
+ if (szCommand == "close"){
+	window.close();
+	parent.window.close();
+    }
+}
+function openNewWin2(fileName,theWidth,theHeight) {
+	DocWindow = window.open(fileName,"Option","toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width="+theWidth+",height="+theHeight)
+}
+function pausecomp(millis){
+	var date = new Date();
+	var curDate = null;
+ 	do { curDate = new Date(); }
+ 	while(curDate-date < millis);
+}
+function readCookie(name) {
+   var nameEQ = name + "=";
+   var ca = document.cookie.split(';');
+   for(var i=0;i < ca.length;i++){
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) { return c.substring(nameEQ.length,c.length); }
+   }
+   return '';
+}
+function SetCookie (name, value) {
+  var argv = SetCookie.arguments;
+  var argc = SetCookie.arguments.length;
+  var expires = (argc > 2) ? argv[2] : null;
+  var path = (argc > 3) ? argv[3] : null;
+  var domain = (argc > 4) ? argv[4] : null;
+  var secure = (argc > 5) ? argv[5] : false;
+  document.cookie = name + "=" + escape (value) +
+    ((path == null) ? "" : ("; path=" + path)) +
+    ((domain == null) ? "" : ("; domain=" + domain)) +
+    ((secure == true) ? "; secure" : "");
+}
+function loginuser() {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() +  86400000);
+    SetCookie("ID",uid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",sessid, null , "/" , ".certegrity.com");
+}
+function logoutuser(olduid, oldsessid) {
+    var expdate = new Date();
+    expdate.setTime (expdate.getTime() -  86400000);
+    SetCookie("ID",olduid, "/" , "/" , ".certegrity.com");
+    SetCookie("Sess",oldsessid, null , "/" , ".certegrity.com");
+}
+function AcceptClass(){
+    var request = "/ls/WsAcceptClass.ashx?ID=" + RegId + "&USR=" + uid + "&callback=?";
+	$.getJSON(request, function (JSONData) {
+		alert("success");
+	});
+	pausecomp(2000);
+	if (top.location != location) {
+		top.location.href = LAST_INST;
+	}
+}
+function updateTheme() {
+	newTheme = "b";
+	if (domain == "ISELLSAFE") { newTheme = "f"; }
+	if (domain == "PBSA") { newTheme = "g"; }
+	var rmbtnClasses = '';
+	var rmhfClasses = '';
+	var rmbdClassess = '';
+	var arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"  ];
+	$.each(arr,function(index, value){
+	    rmbtnClasses = rmbtnClasses + " ui-btn-up-"+value + " ui-btn-hover-"+value;
+	    rmhfClasses = rmhfClasses + " ui-bar-"+value;
+	    rmbdClassess = rmbdClassess + " ui-body-"+value;
+	});
+	$.mobile.activePage.find('.ui-btn').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	if (newTheme != "b") {
+		$.mobile.activePage.find('.ui-btn').removeClass(rmbtnClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+		}
+	$.mobile.activePage.find('.ui-bar').not('.ui-li-divider').removeClass(rmbtnClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-header, .ui-footer').removeClass(rmhfClasses).addClass('ui-bar-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-input-text').removeClass(rmhfClasses).addClass('ui-input-text-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.removeClass(rmbdClassess).addClass('ui-body-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-select').removeClass(rmhfClasses).addClass('ui-select-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn').removeClass(rmhfClasses).addClass('ui-btn-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-hover').removeClass(rmhfClasses).addClass('ui-btn-hover-' + newTheme).attr('data-theme', newTheme);
+	$.mobile.activePage.find('.ui-btn-up').removeClass(rmhfClasses).addClass('ui-btn-up-' + newTheme).attr('data-theme', newTheme);
+}
+function CreateCourse() {
+	var getRef = document.getElementById("CourseLocation");
+	getRef.innerHTML= '<iframe id="Class" name="Class" style="background-color:#f3f3f3;" height="95%" width="95%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="'+ClassLink+'"></iframe>';
+	winHeight = window.innerHeight;
+	getRef.setAttribute('style','height:'+winHeight+';');
+}
+function SetMsg() {
+	$("[data-position='fixed']").fixedtoolbar('hide');
+	$("#courseheader").remove();
+	$(".c-interior").css("padding", "");
+	$(".c-interior").css("margin", "");
+	if (X_FORMAT=="HTML5") {
+		$('#ProceedBtn').remove();
+		$('#MsgTable').remove();
+		if (!HCIPlayer) {
+			document.getElementById('info1').innerHTML = '<a class="fancybox" href="#instructions" title="Technical Support Notes"></a><div id="instructions" style="width:700px;display: none;"> <span class="BigHeader">If you need to leave this course before you finish it, be sure to click the Logout button. If you leave any other way you may lose progress you have made in the course.<br><br>Technical Support is available from 9 a.m. to 1 a.m. EST,  Monday through Friday and 10 a.m. to 6 p.m. EST, Saturday and Sunday at <u>techsupport@gettips.com</u>, 800-GET-TIPS, ext. 600.</div>';
+			$(".fancybox").eq(0).trigger('click');
+			CreateCourse();
+		} else {
+			window.location = ClassLink;
+			}
+	} else {
+	   	jQuery.facebox('<span class="BigHeader">If you need to leave this course before you finish it, be sure to click the Logout button. If you leave any other way you may lose progress you have made in the course.<br><br>Technical Support is available from 9 a.m. to 1 a.m. EST,  Monday through Friday and 10 a.m. to 6 p.m. EST, Saturday and Sunday at <u>techsupport@gettips.com</u>, 800-GET-TIPS, ext. 600.</span>','facebox');
+		document.getElementById('Msg1').innerHTML = '<center><iframe name="ClassFrame" id="ClassFrame2" style="background-color:#FFFFFF" height="792" width="1024" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="'+ClassLink+'" allowtransparency="True"></iframe></center>';
+	}
+}
+function getCookie(name) {
+	var test = readCookie(name);
+	if (test == null || typeof(test) == "undefined") { test = ""; }
+	return test;
+}
+function getStatus() {
+	breakout_of_frame();
+	var relogin = '';
+	loggedIn = false;
+
+	// Check parameters
+	if (uid == null || typeof(uid) == "undefined") { uid = ""; }
+	if (sessid == null || typeof(sessid) == "undefined") { sessid = ""; }
+
+  	// Check cookies
+	var uid2 = getCookie('ID');
+	if (uid2 == null || typeof (uid2) == "undefined") { uid2 = ""; }
+	var sessid2 = getCookie('Sess');
+	if (sessid2 == null || typeof (sessid2) == "undefined") { sessid2 = ""; }
+	if (sessid2 == "" || uid2 == "") {
+	    if (uid != "" && sessid != "") {
+	        loginuser();
+	        uid2 = getCookie('ID');
+	        sessid2 = getCookie('Sess');
+	        }
+		}
+	if (sessid2 == "" || uid2 == "") {
+		Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:120px;"><tr><td valign="middle" height="33%" align="center"><h3 style="color:red; align:center;">You are not logged in, and so cannot take this course</h3>'
+		 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+		$("#Msg1").html(Msg1);
+		$("#ProceedBtn").button();
+		updateTheme();
+		return;
+		}
+
+ 	// Evaluate cookies
+	if (uid != '' && sessid!='') {
+		if (uid2 == uid && sessid2 == sessid) {
+			loggedIn = true;
+			getClass();
+			return;
+			}
+		else {
+			logoutuser(uid2, sessid2);
+			loginuser();
+			uid2 = getCookie('ID');
+			sessid2 = getCookie('Sess');
+			if (uid2 == uid && sessid2 == sessid) {
+				loggedIn = true;
+				getClass();
+				return; }
+			else {
+				Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">There is an issue with your credentials.'
+				 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+				$("#Msg1").html(Msg1);
+				$("#ProceedBtn").button();
+				updateTheme();
+				return;
+				}
+			}
+		}
+
+	var request = "/ls/WsCLogin.ashx?UID="
+			+ uid2 + "&SES=" + sessid2 + "&HP=" + HomePage + "&RL=" + relogin + "&FM=M&callback=?";
+	$.getJSON(request, function (JSONData) {
+    	uid = JSONData.ResultSet.Id;
+		sessid = JSONData.ResultSet.SessId;
+		redirect = JSONData.ResultSet.Redirect;
+		errmsg = JSONData.ResultSet.ErrMsg;
+		logout = JSONData.ResultSet.LogOut;
+		username = JSONData.ResultSet.Username;
+		msgSendFrom = JSONData.ResultSet.EmailAddr;
+		domain = JSONData.ResultSet.Domain;
+
+		if (errmsg!='') {
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Red">'+errmsg+'.'
+			 	+ '</td></tr><tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></font></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			updateTheme();
+			loggedIn = false;
+			DeleteCookie("ID","/",hosting);
+			DeleteCookie("Sess","/",hosting);
+			uid = '';
+			sessid='';
+			errmsg = '';
+			return false;
+		}
+		if (redirect!='') {
+			loggedIn = true;
+			var expdate = new Date();
+			expdate.setTime (expdate.getTime() +  86400000);
+		 	SetCookie("ID", uid, expdate, "/", "."+hosting);
+			SetCookie("Sess", sessid, expdate, "/", "."+hosting);
+			getClass();
+			return;
+		}
+	});
+}
+function getClass() {
+	$("#MSG4").hide();
+	updateTheme();
+	var request = "/ls/WsGetClass.ashx?RID=" + RegId + "&UID=" + uid + "&SES=" + sessid
+		+ "&HP=" + HomePage + "&PP=" + domain + "&PROT=" + myprotocol + "&CUR=" + savesource + "&callback=?";
+	$.getJSON(request, function (JSONData) {
+		var errmsg = JSONData.ResultSet.ErrMsg;
+		if (errmsg!="") {
+			//
+			document.title = "Error starting class";
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center" style="color: red;"><b>' + errmsg + '</b></td></tr>'
+			 + '<tr><td align="Center"><br><br><a href="' + savesource + '#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to Continue</a></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#ProceedBtn").button();
+			$("#Msg1").show();
+			$.mobile.initializePage();
+
+			var count = 30;
+			var countdown = setInterval(function(){
+				$("#info1").html("<center><br /><br /><br />(Continuing in " + count + " seconds)</center>");
+				if (count == 0) {
+					clearInterval(countdown);
+					window.location = savesource + '#reg';
+					}
+				count--;
+			}, 1000);
+			return;
+		}
+
+		// Get results
+		KBA_FLAG = (JSONData.ResultSet.KBA_FLAG === 'True');
+		OldScorm = (JSONData.ResultSet.OldScorm === 'True');
+		AutoStart = (JSONData.ResultSet.AutoStart === 'True');
+		Olark = (JSONData.ResultSet.Olark === 'True');
+		HCIPlayer = (JSONData.ResultSet.HCIPlayer === 'True');
+		AnotherWindow = (JSONData.ResultSet.AnotherWindow === 'True');
+
+		ClassLink = JSONData.ResultSet.ClassLink;
+		MSG1 = JSONData.ResultSet.MSG1;
+		MSG2 = JSONData.ResultSet.MSG2;
+		eCreateClass = JSONData.ResultSet.eCreateClass;
+		eAcceptClass = JSONData.ResultSet.eAcceptClass;
+		DOCLIST = JSONData.ResultSet.DOCLIST;
+		LAST_INST = JSONData.ResultSet.LAST_INST;
+
+		JURIS = JSONData.ResultSet.JURIS;
+		JURIS_LVL = JSONData.ResultSet.JURIS_LVL;
+		JURIS_ID = JSONData.ResultSet.JURIS_ID;
+		COURSE = JSONData.ResultSet.COURSE;
+		if (COURSE) { document.title = COURSE; }
+		FST_NAME = JSONData.ResultSet.FST_NAME;
+		LAST_NAME = JSONData.ResultSet.LAST_NAME;
+		EMAIL_ADDR = JSONData.ResultSet.EMAIL_ADDR;
+
+		X_FORMAT = JSONData.ResultSet.X_FORMAT;
+		REG_STATUS_CD = JSONData.ResultSet.REG_STATUS_CD;
+		CRSE_ID = JSONData.ResultSet.CRSE_ID;
+		RESOLUTION = JSONData.ResultSet.RESOLUTION;
+		RES_X = JSONData.ResultSet.RES_X;
+		RES_Y = JSONData.ResultSet.RES_Y;
+		KBA_REQD = JSONData.ResultSet.KBA_REQD;
+		USER_NAME = JSONData.ResultSet.USER_NAME;
+		LANG_CD = JSONData.ResultSet.LANG_CD;
+		KBA_COUNT = Number(JSONData.ResultSet.KBA_COUNT);
+		KBA_QUESTIONS = Number(JSONData.ResultSet.KBA_QUESTIONS);
+		KBA_NOTICE = JSONData.ResultSet.KBA_NOTICE;
+		TO_ASK = Number(JSONData.ResultSet.TO_ASK);
+		NUM_ANSRD = Number(JSONData.ResultSet.NUM_ANSRD);
+		kba = JSONData.ResultSet.kba;
+		rId = JSONData.ResultSet.Id;
+		rSessId = JSONData.ResultSet.SessId;
+
+		// Set this if X_FORMAT="HTML5"
+	 	$(".fancybox").fancybox();
+		$(".fancybox").eq(0).trigger('click');
+		setTimeout(function(){
+			$.fancybox.close();
+		}, 10000)
+
+		if (TO_ASK>0) {
+			$("#courseheader").html('<h1>Authentication Questions</h1><a href="' + savesource + '#reg" data-icon="back" data-iconpos="right" class="ui-btn-right" rel="external" id="returnlink" style="color: #b6bdca; padding-right: 20px; margin-top: -12pt;">Back</a>');
+			Msg1 = '<center><table border="0" cellspacing="0" cellpadding="0" style="padding-top:80px;">'
+				+ '<tr style="padding-bottom: 10px;"><td colspan="2">'
+				+ '<table width="800" border="0" cellpadding="2" cellspacing="1" bgcolor="#FFFFFF"><tr><td width="800" bgcolor="#F5ECDA" style="text-align: left; height: 2em; padding-left: 10px; padding-top: 10px; color: #333;"><h3><b>Please answer the following questions for ' + JURIS + '. <i>Please note that you will be asked these questions when you are taking the class and in some cases the exam, so it is important you note your answers for later use</i>.</b></h3></td></tr></table>'
+				+ '</td></tr>'
+			var Q_ID = "";
+			var Q_TEXT = "";
+			var ctr = 0;
+			$.each(kba, function(i,kbaitem) {
+				Q_ID = kbaitem.Q_ID;
+				Q_TEXT = kbaitem.Q_TEXT;
+				ctr = ctr + 1;
+				if (Q_ID!="") {
+					a_id[ctr] = Q_ID;
+					varname = "A_" + ctr.toString();
+					Msg1 = Msg1 + '<tr valign="top"><td width="200"><table width="200"><tr height="64"><td class="Header" style="font-size: 16px; color: #333;"><strong>' + ctr.toString() + '. ' + Q_TEXT;
+					Msg1 = Msg1 + '</td></tr></table></td><td width="600"><table width="600" height="32"><tr valign="Bottom"><td class="Body"><input name="' + varname + '" id="' + varname + '" value="" size=80 class="Body"></td></tr></table></td></tr>';
+					$("#"+varname).trigger("create");
+					}
+			});
+			Msg1 = Msg1 + '</table><br /><div id="KBAerror"></div><a href="#" data-role="button" id="SaveKBAAnswers" data-theme="b" style="width: 40%; height: 80%; color: #fff;">Save and Continue</a>'
+			$("#Msg1").html(Msg1);
+			$('.ui-page').trigger('create');
+			$("#SaveKBAAnswers").button();
+			$(document).on('click', '#SaveKBAAnswers', function(e){
+				saveKBAanswers();
+			});
+			updateTheme();
+			return;
+			}
+
+		if (DOCLIST!="") {
+			$("#courseheader").html('<h1>Review Documents and Start Class</h1><a href="' + savesource + '#reg" data-icon="back" data-iconpos="right" class="ui-btn-right" rel="external" id="returnlink" style="color: #b6bdca; padding-right: 20px;">Back</a>');
+			Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Gray">You must read the following before taking the course:<br><br>' + DOCLIST
+			 	+ '</td></tr><tr><td align="Center"><br><br><a href="JavaScript:SetMsg()" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Once read, click here to take class</a></font></td></tr></table>';
+			$("#Msg1").html(Msg1);
+			$("#DocBtn1").button();
+			$("#ProceedBtn").button();
+			$('.ui-page').trigger('create');
+			updateTheme();
+			return;
+			}
+
+		if (X_FORMAT!="HTML5") {
+			if (X_FORMAT=="FLASH") {
+				if (!checkFlash()) { return; }
+				}
+			$("[data-position='fixed']").fixedtoolbar('hide');
+			$("#courseheader").remove();
+			$(".c-interior").css("padding", "");
+			$(".c-interior").css("margin", "");
+			$("#Msg1").html('<center><iframe name="ClassFrame" id="ClassFrame2" style="background-color:#FFFFFF" height="792" width="1024" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="'+ClassLink+'" allowtransparency="True"></iframe></center>');
+			}
+		else {
+			if (REG_STATUS_CD == "Exam Reqd") {
+				document.title = "Take the Exam";
+				updateTheme();
+				window.location = ClassLink;
+				return;
+				}
+			if (!HCIPlayer) {
+				$("#Msg1").html('<a class="fancybox" href="#instructions" title="Technical Support Notes"></a><div id="instructions" style="width:700px;display: none;"> <span class="BigHeader">If you need to leave this course before you finish it, be sure to click the Logout button. If you leave any other way you may lose progress you\'ve made in the course.<br><br>Technical Support is available from 9 a.m. to 1 a.m. EST,  Monday through Friday and 10 a.m. to 6 p.m. EST, Saturday and Sunday at <u>techsupport@gettips.com</u>, 800-GET-TIPS, ext. 600.</span></div>')
+				$(".fancybox").eq(0).trigger('click');
+				SetMsg();
+			} else {
+				window.location = ClassLink;
+				}
+			}
+
+		if (eAcceptClass=="AcceptClass") {
+			$(window).on('beforeunload', function(){ AcceptClass(); });
+			}
+	});
+}
+function saveKBAanswers() {
+	var validated = true;
+	var iter = "";
+	$("#KBAerror").html('');
+
+	// Validate answers
+	for(var i = 1; i <= TO_ASK; i++) {
+		iter = "#A_" + i.toString();
+		a_text[i] = $(iter).val();
+		if (a_text[i]=="") { validated = false; $(iter).css('background-color','lightpink'); }
+		else { $(iter).css('background-color','#eee');}
+		}
+	if (!validated) {
+		$("#KBAerror").html('<center style="color: red; text-size:16pt;">Please make sure you answered every question</center>');
+		return;
+		}
+
+	// Prepare answers
+	myparams = "";
+	for(var i = 1; i <= TO_ASK; i++) {
+		myparams = myparams + "&ID_" + i.toString() + "=" + encodeURIComponent(a_id[i]);
+		myparams = myparams + "&A_" + i.toString() + "=" + encodeURIComponent(a_text[i]);
+	}
+
+	// Submit to service
+	myparams = myparams + "&RID=" + RegId + "&RG=" + escape(uid) + "&SESS=" + escape(sessid) +
+		"&CRS=" + escape(COURSE) + "&JUR=" + escape(JURIS) + "&FST=" + FST_NAME + "&LST=" + LAST_NAME + "&KN=" + KBA_NOTICE +
+		"&EA=" + escape(EMAIL_ADDR) + "&NQ=" + TO_ASK.toString() + "&PP=" + domain + "&HP=" + escape(HomePage) + "&LANG=" + LangCd;
+	var request = "/ls/WsSaveKBA.ashx?" + myparams;
+	$.ajax({
+	  url: request,
+	  dataType: "jsonp",
+	  jsonpCallback: "savedKBA"
+	});
+}
+function savedKBA(JSONData) {
+	var errmsg = JSONData.ResultSet.ErrMsg;
+	var success = (JSONData.ResultSet.Success === 'True');
+	if (success) {
+		$("#Msg1").html('<center><h3 style="padding-top:120px;">Thank you. Your answers were saved</h3></center>');
+		setTimeout(function(){
+			if (X_FORMAT!="HTML5") {
+				$("[data-position='fixed']").fixedtoolbar('hide');
+				$("#courseheader").remove();
+				$(".c-interior").css("padding", "");
+				$(".c-interior").css("margin", "");
+				$("#Msg1").html('<center><iframe name="ClassFrame" id="ClassFrame2" style="background-color:#FFFFFF" height="792" width="1024" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="'+ClassLink+'" allowtransparency="True"></iframe></center>');
+				}
+			else {
+			    if (DOCLIST != "") {
+			        $("#courseheader").html('<h1>Review Documents and Start Class</h1><a href="' + savesource + '#reg" data-icon="back" data-iconpos="right" class="ui-btn-right" rel="external" id="returnlink" style="color: #b6bdca; padding-right: 20px;">Back</a>');
+			        Msg1 = '<table cellpadding="1" border="0" cellspacing="0" width="100%" height="100%" id="MsgTable" style="padding-top:80px;"><tr><td valign="middle" height="33%" class="BigHeader" align="center"><font color="Gray">You must read the following before taking the course:<br><br>' + DOCLIST
+					 	+ '</td></tr><tr><td align="Center"><br><br><a href="JavaScript:SetMsg()" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Once read, click here to take class</a></font></td></tr></table>';
+			        $("#Msg1").html(Msg1);
+			        $("#DocBtn1").button();
+			        $("#ProceedBtn").button();
+			        $('.ui-page').trigger('create');
+			        updateTheme();
+			        return;
+			    }
+
+				if (!HCIPlayer) {
+					$("#Msg1").html('<a class="fancybox" href="#instructions" title="Technical Support Notes"></a><div id="instructions" style="width:700px;display: none;"> <span class="BigHeader">If you need to leave this course before you finish it, be sure to click the Logout button. If you leave any other way you may lose progress you\'ve made in the course.<br><br>Technical Support is available from 9 a.m. to 1 a.m. EST,  Monday through Friday and 10 a.m. to 6 p.m. EST, Saturday and Sunday at <u>techsupport@gettips.com</u>, 800-GET-TIPS, ext. 600.</span></div>')
+					$(".fancybox").eq(0).trigger('click');
+					SetMsg();
+				} else {
+					window.location = ClassLink;
+					}
+				}
+		}, 2000)
+	 } else {
+	 	$("#KBAerror").html('<center style="color: red; text-size:16pt;">' + errmsg + '</center>');
+	 }
+}
+function checkFlash() {
+	if (!hasRequestedVersion) {
+		$("#courseheader").html('<h1>Flash Error</h1><a href="' + savesource + '#reg" data-icon="back" data-iconpos="right" class="ui-btn-right" rel="external" id="returnlink" style="color: #b6bdca; padding-right: 20px;">Back</a>');
+		Msg1 = '<center><h3 style="padding-top:120px; color:red;">' +
+			'This course requires at least version 10 of the Adobe Flash Player</font><br><br><a href="http://www.adobe.com/go/getflashplayer" rel="external" target="_blank"><img src="//www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Flash Player" width="88" height="31" border="0" /></a>' +
+		 	'<br><br><a href="' + savesource + '?UID='+uid+'&SES='+sessid+'&PP='+domain+'#reg" id="ProceedBtn" data-role="button" rel="external" data-theme="c">Click to return to your portal</a>';
+        $("#Msg1").html(Msg1);
+		$("#ProceedBtn").button();
+		$('.ui-page').trigger('create');
+		updateTheme();
+		return false;
+	} else { return true; }
+}
+</script>
+</head>
+<body class="ui-mobile-viewport ui-overlay-c">
+<div data-role="page" id="reg" data-theme="b" style="text-align: center; background-color: #f9f9f9; height: 100%;">
+<div class="c-interior" id="courseinterior" style="text-align: center; background-color: #f9f9f9;">
+<div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" id="courseheader"><h1>Start the Course</h1></div>
+<div data-role="content">
+<div id="Msg1"><h3 style="margin-top:150px;">One moment please...</h3></div>
+<div id="info1"></div><div id="CourseLocation"></div>
+</div></div></div>
+</body>
+<script type="text/javascript">
+// SCREEN ORIENTATION
+var lockOrientation = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+if (lockOrientation) {
+	try { lockOrientation("landscape-primary"); } catch (e) { }
+	try { lockOrientation("landscape"); } catch (e) { }
+	}
+
+// PAGE EVENTS
+$.mobile.resetActivePageHeight = (function (prevHandler) {
+	return function () {
+		var $window = $(window),
+			$page = $("." + $.mobile.activePageClass),
+			$content = $page.find(".ui-content"),
+			scrollTop;
+		scrollTop = $window.scrollTop();
+		$content.height(0);
+		prevHandler.apply(this, arguments);
+		$content.css({ height: "" });
+		$window.scrollTop(scrollTop);
+		$page.trigger("pageresize");
+	};
+})($.mobile.resetActivePageHeight);
+
+$(window.document).on("pageinit", function (event) {
+	var $page = $(event.target),
+	$header = $page.find(".ui-header"),
+	$content = $page.find(".ui-content"),
+	$fullHeight = $page.find(".ui-fullheight"),
+	extraPageHeight = function () {
+		return $page.outerHeight() -
+				$header.outerHeight() -
+				$content.outerHeight();
+		};
+	if (!$fullHeight.length) {
+		return;
+	}
+	$page.on("pageresize updatelayout", function () {
+		$fullHeight
+			.filter(":visible:first")
+			.each(function () {
+				var $element = $(this),
+					initHeight = $element.jqmData("init-height");
+				if (!initHeight) {
+					initHeight = $element.height();
+					$element.jqmData("init-height", initHeight);
+				}
+				if ($element.height() == initHeight && extraPageHeight() <= 0) {
+					return;
+				}
+				$element
+					.height(0)
+					.height(
+						Math.max(
+							initHeight,
+							extraPageHeight()
+						)
+					);
+			});
+	});
+});
+$(document).on('pageshow', '#reg', function(){
+    updateTheme();
+    var screen = $.mobile.getScreenHeight();
+    var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight();
+    var footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight();
+    var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
+    var content = screen - header - footer - contentCurrent;
+    $(".ui-content").height(content);
+});
+$.mobile.initializePage();
+// Start
+$("#Msg1").show();
+updateTheme();
+getStatus();
+</script>
+</html>
